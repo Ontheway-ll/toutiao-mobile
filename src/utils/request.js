@@ -27,11 +27,29 @@ instance.interceptors.request.use(function (config) {
 //     // 将token 统一注入到headers中
 //   }
 // 不用if else用法，第二种写法
-//  config.headers.Authorization如果有值
+//  config.headers.Authorization如果有值  &&后面的括号表示单独的一个字符串
   config.headers.Authorization && (config.headers.Authorization = `Bearer ${store.state.user.token}`)
   return config // 返回配置
 }, function (error) {
   return Promise.reject(error)// 返回错误 这样的话会直接进入到axios的catch中
+})
+
+// axios 默认给我们的数据加了一层 data , 需要解构
+// 用响应拦截器 处理 返回结果的数据  将多嵌套的结构 解构出来
+instance.interceptors.response.use(function (response) {
+  // response实际上已经被 axios 默认包了一层数据  data才是 我们之前处理过的数据
+  // 几乎所有的返回数据都有一层data
+  //   response.data, 是返回来的数据   return data ? JSONBig.parse(data) : {}
+//  第二个data是返回数据接口文档里的data
+  try {
+    return response.data.data
+  } catch (error) {
+    //  如果失败 说明 response.data不存在  如果两层解不开 就返回一层
+    return response.data
+  }
+}, function (error) {
+  // 直接返回失败
+  return Promise.reject(error)// 返回axios中catch
 })
 
 export default instance // 导出
