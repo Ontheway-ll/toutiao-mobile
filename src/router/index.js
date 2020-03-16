@@ -34,25 +34,26 @@ const routes = [
     }, {
       path: '/user',
       component: user//
-    }, {
-      path: '/user/chat',
-      component: chat// 一级路由，小智同学
-    }, {
-      path: '/login',
-      component: login// 一级路由，登录
-    }, {
-      path: '/user/profile',
-      component: profile// 一级路由，编辑资料
-    }, {
-      path: '/search',
-      component: search// 一级路由，搜索中心
-    }, {
-      path: '/search/result',
-      component: searchresult// 一级路由，搜索中心
-    }, {
-      path: '/article',
-      component: article// 一级路由，文章详情
     }]
+  },
+  {
+    path: '/user/chat',
+    component: chat// 一级路由，小智同学
+  }, {
+    path: '/login',
+    component: login// 一级路由，登录
+  }, {
+    path: '/user/profile',
+    component: profile// 一级路由，编辑资料
+  }, {
+    path: '/search',
+    component: search// 一级路由，搜索中心
+  }, {
+    path: '/search/result',
+    component: searchresult// 一级路由，搜索中心
+  }, {
+    path: '/article',
+    component: article// 一级路由，文章详情
   }
 
 ]
