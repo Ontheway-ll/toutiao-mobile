@@ -79,6 +79,7 @@ export default {
     // 点击登录的时候校验所有表单数据
     async login () {
       // 校验手机号和验证码
+      // 导致了一个问题, 当手机号校验没有通过的时候. 验证码也不再校验
       const validateMobile = this.checkMobile()
       const validateCode = this.checkCode()
       if (validateMobile && validateCode) {
@@ -110,7 +111,9 @@ export default {
           this.$router.push(redirectUrl || '/')// 短路表达式
         } catch (error) {
           // 提示消息 提示用户 告诉用户登录失败
-          this.$notify({ message: '用户名或者验证码错误', duration: 800 })
+          // this.$notify({ message: '用户名或者验证码错误', duration: 800 })
+          this.$lnotify({ message: '用户名或者验证码错误' })
+          // this.$lnotify({ message: '用户名或者验证码错误',duration: 4000 })，plugin.js中的800被4000覆盖
         }
       }
     }
