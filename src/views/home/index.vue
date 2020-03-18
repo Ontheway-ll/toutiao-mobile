@@ -8,25 +8,30 @@
            <!-- van-tab里面要生成若干个单元格 -->
             <!-- 这里为什么叫scroll-wrapper  因为样式中对它进行了设置
              设置的是滚动 overflow-y: auto;//竖直方向出滚动条-->
-      <div class="scroll-wrapper">
+      <!-- <div class="scroll-wrapper">
           <van-cell-group>
             <van-cell title="标题" value="内容" v-for="item in 20 " :key="item"></van-cell>
           </van-cell-group>
-      </div>
+      </div> -->
+      <ArticleList></ArticleList>
       </van-tab>
     </van-tabs>
     <!-- 放入图标 vant图标 -->
     <span class="bar_btn">
-      <!-- name='wap-nav'，图标自带的 -->
+      <!-- name='wap-nav'，图标类型自带的 -->
       <van-icon name='wap-nav'></van-icon>
     </span>
   </div>
 </template>
 
 <script>
+// 1引入组件，2注册，3
+import ArticleList from './compoments/article-list'
 export default {
   name: 'Home',
   components: {
+    // ArticleList: ArticleList
+    ArticleList
   }
 }
 </script>
