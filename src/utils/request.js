@@ -2,7 +2,7 @@
 import axios from 'axios'
 import JSONBig from 'json-bigint'
 import store from '@/store'// 引入vuex中的store，相当于组件中的this.$store
-import router from 'router'
+import router from '@/router'// 引入router对象
 // axios.defaults 是对原有默认值进行修改
 // instance 的意思是一个新的实例
 // 设置baseUrl和处理大数字
