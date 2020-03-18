@@ -4,7 +4,7 @@
     <!-- 当页面地址是 /user的时候 应该隐藏掉 导航行 否则不隐藏 -->
     <!-- @事件名="逻辑" -->
     <!-- 如果当前地址不是user，那么就显示头部导航 -->
-    <van-nav-bar @click-right="$router.push('/search')" v-if="$route.path!=='/user'"  title="黑马头条" right-text="搜索" fixed></van-nav-bar>
+    <van-nav-bar @click-right="$router.push('/search')" v-if="$route.path!=='/user'"  title="天天头条" right-text="搜索" fixed></van-nav-bar>
      <!-- 二级路由容器 -->
     <!-- 判断当前的地址 如果是 /user 就给一个 noTop Class -->
     <!-- :class="{ 名称: 布尔值 }" -->

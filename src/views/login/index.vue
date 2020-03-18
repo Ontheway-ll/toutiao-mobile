@@ -5,21 +5,81 @@
     <!-- 登录布局 -->
     <!-- 外层需要用cell-group组件来包裹提供 边框 -->
     <van-cell-group>
-      <van-field label="手机号" placeholder="请输入手机号" ></van-field>
-      <van-field label="验证码" placeholder="请输入验证码" >
+      <!-- 双向绑定，v-model的修饰符，trim,去除空格 -->
+      <van-field  @blur="checkMobile" :error-message="errMessage.mobile" v-model.trim="loginForm.mobile" label="手机号" placeholder="请输入手机号" ></van-field>
+      <van-field @blur="checkCode" :error-message="errMessage.code" v-model.trim="loginForm.code" label="验证码" placeholder="请输入验证码" >
         <van-button slot="button" size="small" type="primary">发送验证码</van-button>
       </van-field>
     </van-cell-group>
         <!-- 登录按钮 -->
         <div class="login-box">
-          <van-button   round block type="info" size="small" >登录</van-button>
+          <van-button @click="login"  round block type="info" size="small" >登录</van-button>
         </div>
          </div>
 </template>
 
 <script>
 export default {
-
+  data () {
+    return {
+      // 定义表单数据，双向绑定
+      loginForm: {
+        mobile: '13911111111', // 手机号最后 ,为了测试方便,我们可以将默认的 手机号和验证码 写成固定值
+        code: '246810'// 验证码
+      },
+      // 定义两个变量，提示消息
+      errMessage: {
+        mobile: '', // 手机提示消息
+        code: ''// 验证码提示消息
+      }
+    }
+  },
+  methods: {
+    // 表单校验，1手机号校验
+    checkMobile () {
+      // 校验，手机号不能为空，格式必须正确
+      if (!this.loginForm.mobile) {
+        // 表示为空，'',null,undifind,取反，为true
+        // 提示消息
+        this.errMessage.mobile = '手机号不能为空'
+        return false
+      }
+      // 格式正确,\d是数字的意思
+      if (!/^1[3-9]\d{9}$/.test(this.loginForm.mobile)) {
+        this.errMessage.mobile = '手机格式不正确'
+        return false
+      }
+      // 如果到了这个地方，说明都正确了
+      // 因为通过了，没有消息提示了
+      this.errMessage.mobile = ''
+      return true
+    },
+    checkCode () {
+      // 检查验证码，不能为空，和六位数
+      // 当前路由信息，route,this.$route
+      if (!this.loginForm.code) {
+        this.errMessage.code = '验证码不能为空'
+        return false
+      }
+      // 验证位数
+      if (!/^\d{6}$/.test(this.loginForm.code)) {
+        this.errMessage.code = '验证码为6位数'
+        return false
+      }
+      // 如果到了这个地方，说明都正确了
+      // 因为通过了，没有消息提示了
+      this.errMessage.code = ''
+      return true
+    },
+    // 点击登录的时候校验所有表单数据
+    login () {
+      // 校验手机号和验证码
+      if (this.checkMobile() && this.checkCode()) {
+        // 如果都为true，表示校验通过
+        // console.log('校验通过')
+      }
+    }
+  }
 }
 </script>
 
