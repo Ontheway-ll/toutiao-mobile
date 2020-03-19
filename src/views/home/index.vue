@@ -4,7 +4,7 @@
     <van-tabs>
         <!-- 内部需要放置子 标签  title值为当前显示的内容-->
          <!-- van-tab是vant组件的样式  -->
-      <van-tab :title="`标签${item}`" v-for="item in 10 " :key="item">
+      <van-tab :title="item.name" v-for="item in channels " :key="item.id">
            <!-- van-tab里面要生成若干个单元格 -->
             <!-- 这里为什么叫scroll-wrapper  因为样式中对它进行了设置
              设置的是滚动 overflow-y: auto;//竖直方向出滚动条-->
@@ -27,11 +27,27 @@
 <script>
 // 1引入组件，2注册，3
 import ArticleList from './compoments/article-list'
+import { getMychannels } from '@/api/channel'// 引入组件，data接收，methods使用函数
 export default {
   name: 'Home',
   components: {
     // ArticleList: ArticleList
     ArticleList
+  },
+  // 组件中为什么data是 返回一个新对象
+  data () {
+    return {
+      channels: []// 接收频道数据
+    }
+  },
+  methods: {
+    async getMychannels () { // 自己定义的一个方法，也叫getMychannels
+      const data = await getMychannels()
+      this.channels = data.channels
+    }
+  },
+  created () {
+    this.getMychannels()
   }
 }
 </script>
