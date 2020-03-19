@@ -46,6 +46,7 @@
 </template>
 
 <script>
+import { getAticles } from '@/api/articles'
 export default {
   data () {
     return {
@@ -53,7 +54,8 @@ export default {
       uploading: false, // 表示是否开启了上拉加载 默认值false
       finished: false, // 表示 是否已经完成所有数据的加载
       downLoading: false, // 下载刷新状态 表示是否正在下拉刷新,变量名自己写
-      successText: '' // 刷新成功的文本
+      successText: '', // 刷新成功的文本
+      timestamp: null// 定义一个 timestamp属性,用来存放时间戳
     }
   },
   // props 对象形式 可以约束传入的值 必填 传值类型
@@ -62,12 +64,12 @@ export default {
     channel_id: {
       required: true, // 必填项 此属性的含义 true 要求该 props必须传
       type: Number, // 表示要传入的prop属性的类型
-      default: null, // 默认值的意思 假如你没有传入 prop属性 默认值 就会被采用
-      timestamp: null// 定义一个 timestamp属性,用来存放时间戳
+      default: null // 默认值的意思 假如你没有传入 prop属性 默认值 就会被采用
+
     }
   },
   methods: {
-    onLoad () {
+    async onLoad () {
       //   console.log('开始加载数据')
       // 下面这么写 依然不能关掉加载状态 为什么 ? 因为关掉之后  检测机制  高度还是不够 还是会开启
       // 如果你有数据 你应该 把数据到加到list中
@@ -77,18 +79,45 @@ export default {
       //   //   this.uploading=true这样写是不对的，高度不够还是会开启
       //   this.finished = true// 表示 数据已经全部加载完毕 没有数据了
       // }, 1000)// 等待一秒后关闭加载状态
-      if (this.articles.length > 50) {
-        this.finished = true
+      // if (this.articles.length > 50) {
+      //   this.finished = true
+      // } else {
+      //   // Array.from()方法就是将一个类数组对象或者可遍历对象转换成一个真正的数组。
+      //   const arr = Array.from(
+      //     Array(15),
+      //     (value, index) => this.articles.length + index + 1
+      //   )
+      //   // 上拉加载 不是覆盖之前的数据  应该把数据追加到数组的队尾
+      //   this.articles.push(...arr)
+      //   // 添加完数据 需要手动的关掉 loading
+      //   this.uploading = false
+      // }
+      // 在onLoad中实现加载数据后,
+
+      // 1 将数据追加到数据队尾,
+
+      // 2并且获取历史时间戳给timestamp,
+
+      // 3加载完毕 关闭加载状态
+
+      // 4判断 是否有历史时间戳 没有的话 直接将finished关闭
+
+      // 5第一次加载, 时间戳的是空的, 所以给当前时间戳
+      const data = await getAticles({
+        channel_id: this.channel_id, // this.channel_id指的是 当前的频道id
+        timestamp: this.timestamp || Date.now()// 如果有历史时间戳 用历史时间戳 否则用当前的时间戳
+      })
+      // 获取内容
+      this.articles.push(...data.results)// 将数据追加到队尾
+      this.uploading = false // 关闭加载状态
+      // 将历史时间戳 给timestamp  但是 赋值之前有个判断 需要判断一个历史时间是否为0
+      // 如果历史时间戳为 0 说明 此时已经没有数据了 应该宣布 结束   finished true
+      if (data.pre_timestamp) {
+        // 如果有历史时间戳 表示 还有数据可以继续进行加载
+        this.timestamp = data.pre_timestamp
       } else {
-        // Array.from()方法就是将一个类数组对象或者可遍历对象转换成一个真正的数组。
-        const arr = Array.from(
-          Array(15),
-          (value, index) => this.articles.length + index + 1
-        )
-        // 上拉加载 不是覆盖之前的数据  应该把数据追加到数组的队尾
-        this.articles.push(...arr)
-        // 添加完数据 需要手动的关掉 loading
-        this.uploading = false
+        // 表示没有数据可以请求了
+        this.finished = true
       }
     },
     onRefresh () {
