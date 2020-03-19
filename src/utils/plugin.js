@@ -8,6 +8,15 @@ export default {
     // 接收形参params，名字随意，=>形参{ message: '用户名或者验证码错误', duratio
     // params是message  ...params是拷贝过来
     Vue.prototype.$lnotify = (params) => Vue.prototype.$notify({ duration: 800, ...params })
+    Vue.prototype.$sleep = sleep // 定义一个原型属性 $sleep 所有组件都有了这个属性
   }
-
+}
+// 休眠函数
+// // time  = 500 如果你传入了time 用你的 如果说你没传 time 用 500
+function sleep (time = 500) {
+// 返回一个promise
+  return new Promise(function (resolve, reject) {
+    // 肯定是成功执行 但是有一个延迟
+    setTimeout(() => resolve(), time)
+  })
 }

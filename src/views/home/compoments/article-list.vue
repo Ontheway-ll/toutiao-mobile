@@ -71,6 +71,7 @@ export default {
   },
   methods: {
     async onLoad () {
+      await this.$sleep() // 人为控制了 请求的时间
       //   console.log('开始加载数据')
       // 下面这么写 依然不能关掉加载状态 为什么 ? 因为关掉之后  检测机制  高度还是不够 还是会开启
       // 如果你有数据 你应该 把数据到加到list中
@@ -122,6 +123,7 @@ export default {
       }
     },
     async onRefresh () {
+      await this.$sleep() // 人为控制了 请求的时间
       // setTimeout(() => {
       //   const arr = Array.from(
       //     Array(2),
