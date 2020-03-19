@@ -13,26 +13,27 @@
       <van-list finished-text="没有了" @load="onLoad" v-model="uploading" :finished="finished">
         <!-- 循环的内容 -->
         <van-cell-group>
-          <van-cell v-for="item in articles" :key="item" >
+          <van-cell v-for="item in articles" :key="item. art_id.toString()" >
             <!-- 放置元素 文章列表的循环项  无图  单图  三图 -->
             <div class="article_item">
               <!-- 标题 -->
-              <h3 class="van-ellipsis">2020不平凡的一年</h3>
+              <h3 class="van-ellipsis">{{item.title}}</h3>
+               <!-- 图片组件用的是 vant的组件库中的图片组件 需要使用该组件 进行图片的懒加载 -->
               <!-- 三图 -->
-              <div class="img_box">
-                <van-image class="w33" fit="cover" src="https://img.yzcdn.cn/vant/cat.jpeg" />
-                <van-image class="w33" fit="cover" src="https://img.yzcdn.cn/vant/cat.jpeg" />
-                <van-image class="w33" fit="cover" src="https://img.yzcdn.cn/vant/cat.jpeg" />
+              <div class="img_box" v-if="item.cover.tpye===3">
+                <van-image class="w33" fit="cover" :src="item.cover.images[0]" />
+                <van-image class="w33" fit="cover" :src="item.cover.images[1]" />
+                <van-image class="w33" fit="cover" :src="item.cover.images[2]" />
               </div>
               <!-- 放置一张图 ，暂时隐藏-->
-              <!-- <div class="img_box">
-                <van-image class="w100" fit="cover" src="https://img.yzcdn.cn/vant/cat.jpeg" />
-              </div> -->
+              <div class="img_box">
+                <van-image class="w100" fit="cover" :src="item.cover.images[0]" />
+              </div>
               <!-- 底部信息 -->
               <div class="info_box">
-                <span>你像一阵风</span>
-                <span>8评论</span>
-                <span>10分钟前</span>
+                <span>{{item.aut_name}}</span>
+                <span>{{item.comm_count}}</span>
+                <span>{{item.pubdate}}</span>
                 <span class="close">
                   <van-icon name="cross"></van-icon>
                 </span>
