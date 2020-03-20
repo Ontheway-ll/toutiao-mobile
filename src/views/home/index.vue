@@ -13,7 +13,8 @@
             <van-cell title="标题" value="内容" v-for="item in 20 " :key="item"></van-cell>
           </van-cell-group>
       </div> -->
-      <ArticleList :channel_id="item.id"></ArticleList>
+      <!-- 父组件监听自定义事件,并且弹出层 -->
+      <ArticleList @showAction="openAction" :channel_id="item.id"></ArticleList>
       </van-tab>
     </van-tabs>
     <!-- 放入图标 vant图标 -->
@@ -21,6 +22,10 @@
       <!-- name='wap-nav'，图标类型自带的 -->
       <van-icon name='wap-nav'></van-icon>
     </span>
+    <!-- 放置一个弹层组件 -->
+    <van-popup v-model="showMoreAction" style="width:80%">
+      <MoreAction></MoreAction>
+    </van-popup>
   </div>
 </template>
 
@@ -28,24 +33,33 @@
 // 1引入组件，2注册，3
 import ArticleList from './compoments/article-list'
 import { getMychannels } from '@/api/channel'// 引入组件，data接收，methods使用函数
+import MoreAction from './compoments/moreAction'
 export default {
   name: 'Home',
   components: {
     // ArticleList: ArticleList
-    ArticleList
+    ArticleList, MoreAction
+
   },
   // 组件中为什么data是 返回一个新对象
   data () {
     return {
-      channels: []// 接收频道数据
+      channels: [], // 接收频道数据
+      showMoreAction: false// 控制反馈组件显示隐藏
     }
   },
   methods: {
     async getMychannels () { // 自己定义的一个方法，也叫getMychannels
       const data = await getMychannels()
       this.channels = data.channels
+    },
+    // 此方法 会在article-list组件触发 showAction的时候 触发
+    openAction () {
+    // 此时应该弹出反馈的层
+      this.showMoreAction = true
     }
   },
+
   created () {
     this.getMychannels()
   }

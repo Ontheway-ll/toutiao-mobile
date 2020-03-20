@@ -34,8 +34,9 @@
                 <span>{{item.aut_name}}</span>
                 <span>{{item.comm_count}}</span>
                 <span>{{item.pubdate | relTime }}</span>
-                <span class="close">
-                  <van-icon name="cross"></van-icon>
+                <!-- 子传父自定义事件，点击叉号事件，传一个showAction -->
+                <span @click="$emit('showAction')" class="close" v-if="user.token">
+                  <van-icon  name="cross"></van-icon>
                 </span>
               </div>
             </div>
@@ -48,7 +49,11 @@
 
 <script>
 import { getAticles } from '@/api/articles'
+import { mapState } from 'vuex'
 export default {
+  computed: {
+    ...mapState(['user'])// 将user对象映射到计算属性中
+  },
   data () {
     return {
       articles: [],
