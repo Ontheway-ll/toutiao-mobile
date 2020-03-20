@@ -35,7 +35,8 @@
                 <span>{{item.comm_count}}</span>
                 <span>{{item.pubdate | relTime }}</span>
                 <!-- 子传父自定义事件，点击叉号事件，传一个showAction -->
-                <span @click="$emit('showAction')" class="close" v-if="user.token">
+                <!-- 所以我们需要点击叉号的时候 把文章id传出来,并且在父组件中接收 存储 -->
+                <span @click="$emit('showAction',item. art_id.toString())" class="close" v-if="user.token">
                   <van-icon  name="cross"></van-icon>
                 </span>
               </div>

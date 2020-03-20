@@ -45,7 +45,8 @@ export default {
   data () {
     return {
       channels: [], // 接收频道数据
-      showMoreAction: false// 控制反馈组件显示隐藏
+      showMoreAction: false, // 控制反馈组件显示隐藏
+      artileId: null// 定义一个值接收
     }
   },
   methods: {
@@ -54,9 +55,11 @@ export default {
       this.channels = data.channels
     },
     // 此方法 会在article-list组件触发 showAction的时候 触发
-    openAction () {
+    openAction (artId) {
     // 此时应该弹出反馈的层
       this.showMoreAction = true
+      // 把ID存储起来
+      this.artileId = artId
     }
   },
 
