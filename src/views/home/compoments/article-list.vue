@@ -51,7 +51,32 @@
 <script>
 import { getAticles } from '@/api/articles'
 import { mapState } from 'vuex'
+import eventBus from '@/utils/eventbus'
 export default {
+  // 初始化化函数监听
+  // 监听删除文章事件
+  // 相当于 有多少个实例 就有多少个监听
+  // delAriticle  => 假如有四个实例  4个函数
+  created () { // 如果触发会执行后面的函数,两个参数ID接收，名字随意
+    eventBus.$on('delArticle', (artId, chanlId) => {
+      // 这个位置 每个组件实例都会触发
+    // 这里要判断一下 传递过来的频道是否等于 自身的频道
+      if (chanlId === this.channel_id) {
+      // 说明当前的这个article-list实例 就是我们要去删除数据的实例
+      //  [1,2,3] findIndex(function(item,index){return item===3})返回2
+        const index = this.articles.findIndex(item => item.art_id.toString() === artId)
+        // 通过id 查询对应的文章数据所在的下标
+        if (index > -1) {
+          // 因为下标从0开始 所以应该大于-1
+          this.articles.splice(index, 1)// 删除对应下标的数据
+        }
+        if (this.articles.length === 0) {
+          // 如果把数据删光了，手动触发上拉加载，重新请求加载数据
+          this.onLoad()
+        }
+      }
+    })
+  },
   computed: {
     ...mapState(['user'])// 将user对象映射到计算属性中
   },

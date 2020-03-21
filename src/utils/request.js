@@ -25,13 +25,14 @@ const instance = axios.create({
 instance.interceptors.request.use(function (config) {
   // 成功的时候 如何处理
   // 读取配置信息 给配置信息中注入token
-//   if (store.state.user.token) {
-//     config.headers.Authorization = `Bearer ${store.state.user.token}`
-//     // 将token 统一注入到headers中
-//   }
-// 不用if else用法，第二种写法
-//  config.headers.Authorization如果有值  &&后面的括号表示单独的一个字符串
-  config.headers.Authorization && (config.headers.Authorization = `Bearer ${store.state.user.token}`)
+  // if (store.state.user.token) {
+  //   config.headers.Authorization = `Bearer ${store.state.user.token}`
+  //   // 将token 统一注入到headers中
+  // }
+  // 不用if else用法，第二种写法
+  //  config.headers.Authorization如果有值  &&后面的括号表示单独的一个字符串
+  // config.headers.Authorization && (config.headers.Authorization = `Bearer ${store.state.user.token}`)
+  (store.state.user.token) && (config.headers.Authorization = `Bearer ${store.state.user.token}`)
   return config // 返回配置
 }, function (error) {
   return Promise.reject(error)// 返回错误 这样的话会直接进入到axios的catch中

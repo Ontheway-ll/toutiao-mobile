@@ -14,3 +14,14 @@ export function getAticles (params) {
     }
   })
 }
+/*****
+ *  不感兴趣的文章接口
+ *
+ * ***/
+export function dislikeArticle (data) {
+  return request({
+    url: '/article/dislikes',
+    method: 'post',
+    data// body参数
+  })
+}
