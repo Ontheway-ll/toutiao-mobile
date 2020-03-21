@@ -8,23 +8,30 @@
     </van-cell-group>
     <van-cell-group v-else>
       <van-cell icon="arrow-left" @click="isReport=false">返回</van-cell>
-      <van-cell>侵权</van-cell>
-      <van-cell>色情</van-cell>
-      <van-cell>暴力</van-cell>
-      <van-cell>低俗</van-cell>
-      <van-cell>不适</van-cell>
-      <van-cell>错误</van-cell>
-      <van-cell>其他</van-cell>
+      <!-- 弹层在article-list中，子传父，调接口的时候
+      需要把，value传给后台，接口文档里type举报类型里有0123等，
+      target是举报文章的ID，home组件中有ID
+      这是触发点击事件，然后在home中监听 -->
+      <van-cell @click="$emit('report',item.value)" v-for="item in reports" :key="item.value">{{item.label}}</van-cell>
     </van-cell-group>
   </div>
 </template>
 
 <script>
+// 引入常量变量
+import { reports } from '@/api/constants'
+import eventBus from '@/utils/eventbus'
 export default {
   data () {
     return {
-      isReport: false
+      isReport: false,
+      reports// es6,通过v-for循环
     }
+  },
+  created () {
+    // 一初始化就监听,
+    eventBus.$on('delArticle', () => (this.isReport = false))
+    // 只要一删除，弹窗回到初始化状态
   }
 }
 </script>

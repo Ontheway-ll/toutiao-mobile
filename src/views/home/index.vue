@@ -27,7 +27,12 @@
       <!-- 监听谁就在谁的标签里写 -->
       <!-- 父组件 监听该事件, 调用不喜欢接口 -->
       <!-- 应该在此位置监听 more-action触发的事件 -->
-      <MoreAction @dislike="dislikeArticle"></MoreAction>
+      <!-- report是监听点击举报文章事件reportArticle定义一个方法 -->
+      <!-- 3改造，传入两个参数 -->
+      <!-- 不喜欢文章 和 举报文章 用一个方法 -->
+        <!-- @事件名="方法名"  @事件名="方法名()" @事件名="方法名($event 参数)" @事件名="逻辑" -->
+        <!--5  $event 是事件参数 在h5标签中 dom元素的事件参数  自定义事件中$event 就是自定义事件传出的第一个参数 -->
+      <MoreAction @dislike="dislikeOrreport('dislike')" @report="dislikeOrreport( 'report',$event)"></MoreAction>
     </van-popup>
   </div>
 </template>
@@ -38,7 +43,7 @@
 import ArticleList from './compoments/article-list'
 import { getMychannels } from '@/api/channel'// 引入组件，data接收，methods使用函数
 import MoreAction from './compoments/moreAction'
-import { dislikeArticle } from '@/api/articles'// 不感兴趣
+import { dislikeArticle, reportArticle } from '@/api/articles'// 不感兴趣
 import eventbus from '@/utils/eventbus'// 公共事件处理器
 export default {
   name: 'Home',
@@ -69,11 +74,18 @@ export default {
       this.artileId = artId
     },
     // 调用不感兴趣接口，调用接口这样写({})
-    async dislikeArticle () {
+    // 1 改造封装，调用不感兴趣和举报接口一样，参数不同名称改了，上面的dislike方法名字改了
+    // 4 operateType 是操作类型 如果是dislike 就是不喜欢 如果是 report 就是 举报
+    async dislikeOrreport (operateType, type) {
       try {
-        await dislikeArticle({
-          target: this.artileId// 不感兴趣的ID
-        })// await下方的逻辑 是 resolve(成功)之后 的
+        // 2 需要根据一个参数来判断 是举报还是不喜欢
+        operateType === 'dislike' ? await dislikeArticle({ target: this.artileId })// 不感兴趣的ID
+          : await reportArticle({
+            target: this.artileId, // type:type,传过来的type
+            type//  这里的type怎么办 ?????? 通过$event传出来
+          // await 下方是举报文章成功，失败需要trycantch
+          })
+        // await下方的逻辑 是 resolve(成功)之后 的
         this.$lnotify({
           type: 'success',
           message: '操作成功'
@@ -92,6 +104,32 @@ export default {
         })
       }
     }
+    // 调用举报接口，先引入封装的reportArticle
+    // async reportArticle (type) {
+    //   // 会弹出0123等，
+    //   // alert(type)
+    //   try {
+    //     // 传body参数target和type
+    //     await reportArticle({
+    //       target: this.artileId,
+    //       // type:type,传过来的type
+    //       type
+    //     // await 下方是举报文章成功，失败需要trycantch
+    //     })
+    //     this.$lnotify({
+    //       type: 'success',
+    //       message: '操作成功'
+    //     })
+    //     // 将举报的文章删除
+    //     eventbus.$emit('delArticle', this.artileId, this.channels[this.activeIndex].id)
+    //     this.showMoreAction = false// 关闭弹层
+    //   } catch (error) {
+    //     this.$lnotify({
+    //       // 默认是红色
+    //       message: '操作失败'
+    //     })
+    //   }
+    // }
 
   },
 
