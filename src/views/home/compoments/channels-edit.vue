@@ -17,11 +17,13 @@
         </van-grid-item>
       </van-grid>
     </div>
+     <!-- 我的频道的数据 是 当前用户自己的频道(在登录情况下用户自己的频道, 匿名情况下自己的频道 ) -->
+    <!-- 可选频道 全部的频道 - 我的频道 -->
     <div class="channel">
       <div class="tit">可选频道：</div>
       <van-grid class="van-hairline--left">
-        <van-grid-item v-for="index in 8" :key="index">
-          <span class="f12">频道{{index}}</span>
+        <van-grid-item v-for="item in optionalChannels " :key="item.id">
+          <span class="f12">{{item.name}}</span>
           <van-icon class="btn" name="plus"></van-icon>
         </van-grid-item>
       </van-grid>
@@ -30,10 +32,12 @@
 </template>
 
 <script>
+import { getAllChannels } from '@/api/channel'
 export default {
   data () {
     return {
-      editing: false// 正在编辑频道
+      editing: false, // 正在编辑频道
+      allChannels: []// 定义一个变量 接收全部的数据
     }
   },
   //   接收父组件传递过来的频道数据
@@ -44,6 +48,25 @@ export default {
       type: Array,
       default: () => []
     }
+  },
+  //   调用获取所有的频道
+  methods: {
+    async getAllChannels () {
+      const data = await getAllChannels()
+      this.allChannels = data.channels// data已经结构了一层
+    }
+  },
+  //   为什么要不用计算属性? 可选频道 其实是一个动态的结果
+  //    全部数据(data) - 用户频道(props) => 重新计算频道数据 => 缓存
+  computed: {
+    //   可选频道 计算属性必须要求有返回值
+    optionalChannels () {
+      // 全部频道 - 我的频道,数组过滤，返回一个新数组，数组去重，
+      return this.allChannels.filter(item => !this.channels.some(o => o.id === item.id))
+    }
+  },
+  created () {
+    this.getAllChannels()
   }
 }
 </script>
