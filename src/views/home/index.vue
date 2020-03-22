@@ -40,7 +40,7 @@
     <van-action-sheet v-model="showChannelEdit" title="编辑频道" :round="false">
        <!-- 把我的频道传到子组件里，给谁传就在谁的标签里写 -->
        <!-- =后面的变量channels是data中的数据，前面需要加: -->
-        <channdelsEdit @selectChannel="selectChannel" :channels=channels></channdelsEdit>
+        <channdelsEdit :activeIndex="activeIndex"  @selectChannel="selectChannel" :channels=channels></channdelsEdit>
     </van-action-sheet>
   </div>
 </template>
