@@ -18,7 +18,8 @@
       </van-tab>
     </van-tabs>
     <!-- 放入图标 vant图标 -->
-    <span class="bar_btn">
+    <!-- 注册图标的点击事件, 显示编辑频道面板 -->
+    <span @click="showChannelEdit=true" class="bar_btn">
       <!-- name='wap-nav'，图标类型自带的 -->
       <van-icon name='wap-nav'></van-icon>
     </span>
@@ -34,6 +35,13 @@
         <!--5  $event 是事件参数 在h5标签中 dom元素的事件参数  自定义事件中$event 就是自定义事件传出的第一个参数 -->
       <MoreAction @dislike="dislikeOrreport('dislike')" @report="dislikeOrreport( 'report',$event)"></MoreAction>
     </van-popup>
+      <!-- 频道编辑组件 放在 弹出面板的组件 -->
+      <!-- round没加冒号默认是字符串，false的字符串默认是true，!"fasle"=fasle -->
+    <van-action-sheet v-model="showChannelEdit" title="编辑频道" :round="false">
+       <!-- 把我的频道传到子组件里，给谁传就在谁的标签里写 -->
+       <!-- =后面的变量channels是data中的数据，前面需要加: -->
+        <channdelsEdit :channels=channels></channdelsEdit>
+    </van-action-sheet>
   </div>
 </template>
 
@@ -45,11 +53,12 @@ import { getMychannels } from '@/api/channel'// 引入组件，data接收，meth
 import MoreAction from './compoments/moreAction'
 import { dislikeArticle, reportArticle } from '@/api/articles'// 不感兴趣
 import eventbus from '@/utils/eventbus'// 公共事件处理器
+import channdelsEdit from './compoments/channels-edit'
 export default {
   name: 'Home',
   components: {
     // ArticleList: ArticleList
-    ArticleList, MoreAction
+    ArticleList, MoreAction, channdelsEdit
 
   },
   // 组件中为什么data是 返回一个新对象
@@ -58,7 +67,8 @@ export default {
       channels: [], // 接收频道数据
       showMoreAction: false, // 控制反馈组件显示隐藏
       artileId: null, // 定义一个值接收
-      activeIndex: 0// 当前被默认激活 的页签
+      activeIndex: 0, // 当前被默认激活 的页签
+      showChannelEdit: false// 编辑频道，默认不显示
     }
   },
   methods: {
@@ -139,6 +149,18 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+// 处理弹出编辑面板的样式
+.van-action-sheet {
+  max-height: 100%;
+  height: 100%;
+  .van-action-sheet__header {
+    background: #3296fa;
+    color: #fff;
+    .van-icon-close {
+      color: #fff;
+    }
+  }
+}
 .van-tabs {
   height: 100%;
   display: flex;
