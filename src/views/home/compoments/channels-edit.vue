@@ -13,6 +13,7 @@
           <!-- 参数第一写法，item.id 和index都可以   点击我的频道,进入频道,子传父 -->
           <!-- <span @click="$emit('selectChannel',item.id)" class="f12">{{item.name}}</span> -->
           <span :class="{red:index===activeIndex}" @click="$emit('selectChannel',index)" class="f12">{{item.name}}</span>
+                 <!-- :class="{red:index}"red后面是布尔值，为true生效，        -->
            <!--叉号标签 应该 在进入编辑状态时显示 应该在 退出编辑状态时不显示 -->
           <!-- 因为第一个永远不显示 所以说条件应该加一个 不等于0 -->
           <van-icon v-if="index!==0 && editing" class="btn" name="cross"></van-icon>
