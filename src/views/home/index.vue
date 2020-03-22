@@ -40,7 +40,7 @@
     <van-action-sheet v-model="showChannelEdit" title="编辑频道" :round="false">
        <!-- 把我的频道传到子组件里，给谁传就在谁的标签里写 -->
        <!-- =后面的变量channels是data中的数据，前面需要加: -->
-        <channdelsEdit :channels=channels></channdelsEdit>
+        <channdelsEdit @selectChannel="selectChannel" :channels=channels></channdelsEdit>
     </van-action-sheet>
   </div>
 </template>
@@ -75,6 +75,15 @@ export default {
     async getMychannels () { // 自己定义的一个方法，也叫getMychannels
       const data = await getMychannels()
       this.channels = data.channels
+    },
+    // 把要增加的频道传到父组件，把index传过来，这边在接收
+    selectChannel (index) { // 如果是ID
+      // const data = await selectChannel()不用后台调接口
+      // 切换到对应频道，关闭弹层
+      // 第二种做法，如果子组件传过来的是ID,如果我的频道数据里ID和你传过来的相等找到下标
+      // let index = this.channels.findIndex(item=>item.id===id)
+      this.activeIndex = index// 将tabs激活标签切换到对应的标签下
+      this.showChannelEdit = false// 关闭弹层
     },
     // 此方法 会在article-list组件触发 showAction的时候 触发
     openAction (artId) {
