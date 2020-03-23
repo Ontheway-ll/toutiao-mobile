@@ -40,7 +40,10 @@
     <van-action-sheet v-model="showChannelEdit" title="编辑频道" :round="false">
        <!-- 把我的频道传到子组件里，给谁传就在谁的标签里写 -->
        <!-- =后面的变量channels是data中的数据，前面需要加: -->
-        <channdelsEdit :activeIndex="activeIndex"  @selectChannel="selectChannel" :channels=channels></channdelsEdit>
+        <channdelsEdit :activeIndex="activeIndex"
+                        @selectChannel="selectChannel"
+                        @delChannel="delChannel"
+                        :channels=channels></channdelsEdit>
     </van-action-sheet>
   </div>
 </template>
@@ -49,7 +52,7 @@
 // .vue组件之间的引入没有大括号,需要在data中注册，然后放置到页面结构中，.js封装的文件的引入需要大括号
 // 1引入组件，2注册，3
 import ArticleList from './compoments/article-list'
-import { getMychannels } from '@/api/channel'// 引入组件，data接收，methods使用函数
+import { getMychannels, delChannel } from '@/api/channel'// 引入组件，data接收，methods使用函数
 import MoreAction from './compoments/moreAction'
 import { dislikeArticle, reportArticle } from '@/api/articles'// 不感兴趣
 import eventbus from '@/utils/eventbus'// 公共事件处理器
@@ -84,6 +87,23 @@ export default {
       // let index = this.channels.findIndex(item=>item.id===id)
       this.activeIndex = index// 将tabs激活标签切换到对应的标签下
       this.showChannelEdit = false// 关闭弹层
+    },
+    // 删除我的频道实现删除本地频道并切换索引及删除自身数据
+    async delChannel (id) {
+      try {
+        await delChannel(id)// 调用api方法  此时只是删除了 缓存中的数据
+        // 如果此时成功的resolve了 我们 应该去移除 当前data中的数据
+        const index = this.channels.findIndex(item => item.id === id)// 找到对应的索引后
+        // 要根据当前删除的索引 和 当前激活的索引的 关系 来 决定 当前激活索引是否需要改变
+        if (index <= this.activeIndex) {
+        //  如果你删除的索引 是在当前激活索引之前的 或者等于当前激活索引的
+          // 此时就要把激活索引 给往前挪一位
+          this.activeIndex = this.activeIndex - 1
+        }
+        this.channels.splice(index, 1)// 删除对应的索引频
+      } catch (error) {
+        this.$lnotify({ message: '删除频道失败' })
+      }
     },
     // 此方法 会在article-list组件触发 showAction的时候 触发
     openAction (artId) {
