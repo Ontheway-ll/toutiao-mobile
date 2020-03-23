@@ -87,7 +87,7 @@ export function addChannels (channel) {
   return new Promise(function (resolve, reject) {
     // 根据当前的token用哪个key
     const key = store.state.user.token ? CACHE_V : CACHE_T
-    const channels = JSON.parse(localStorage.setItem(key))// 转化数组，得到缓存中的数据
+    const channels = JSON.parse(localStorage.getItem(key))// 转化数组，得到缓存中的数据
     channels.push(channel)// 将添加的频道数据加到数组的队尾
     localStorage.setItem(key, JSON.stringify(channels))// 重新写入缓存
     resolve()// 执行这一步，相当于告诉我们使用promise的方法执行成功了

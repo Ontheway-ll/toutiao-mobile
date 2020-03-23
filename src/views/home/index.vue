@@ -43,6 +43,7 @@
         <channdelsEdit :activeIndex="activeIndex"
                         @selectChannel="selectChannel"
                         @delChannel="delChannel"
+                        @addChannels="addChannels"
                         :channels=channels></channdelsEdit>
     </van-action-sheet>
   </div>
@@ -52,7 +53,7 @@
 // .vue组件之间的引入没有大括号,需要在data中注册，然后放置到页面结构中，.js封装的文件的引入需要大括号
 // 1引入组件，2注册，3
 import ArticleList from './compoments/article-list'
-import { getMychannels, delChannel } from '@/api/channel'// 引入组件，data接收，methods使用函数
+import { getMychannels, delChannel, addChannels } from '@/api/channel'// 引入组件，data接收，methods使用函数
 import MoreAction from './compoments/moreAction'
 import { dislikeArticle, reportArticle } from '@/api/articles'// 不感兴趣
 import eventbus from '@/utils/eventbus'// 公共事件处理器
@@ -87,6 +88,10 @@ export default {
       // let index = this.channels.findIndex(item=>item.id===id)
       this.activeIndex = index// 将tabs激活标签切换到对应的标签下
       this.showChannelEdit = false// 关闭弹层
+    },
+    async addChannels (channel) {
+      await addChannels(channel)
+      this.channels.push(channel)// 自身加一个频道 影响子组件
     },
     // 删除我的频道实现删除本地频道并切换索引及删除自身数据
     async delChannel (id) {
