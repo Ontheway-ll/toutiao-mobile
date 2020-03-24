@@ -7,8 +7,8 @@
     <van-search @search="onSearch" v-model.trim="q"  placeholder="请输入搜索关键词" shape="round" />
     <!-- 联想内容  有输入内容时 显示联想 -->
     <van-cell-group class="suggest-box" v-if="q">
-      <van-cell icon="search">
-        <span>java</span>
+      <van-cell @click="toResult(item)" icon="search" v-for="(item,index) in suggestList" :key="index">
+        {{item}}
       </van-cell>
     </van-cell-group>
       <!-- 如果没有历史记录 隐藏掉  -->
@@ -34,6 +34,7 @@
 <script>
 // 此key用来作为 历史记录在本地缓存中的key
 // 定义一个key,用来存储历史记录到本地缓存
+import { getSuggestion } from '@/api/articles'
 const key = 'toutiao-historyList'
 export default {
   name: 'search',
@@ -44,7 +45,8 @@ export default {
       // 当data初始化的时候 会读取后面数据
       // ["葡萄干","动漫","马云"
       // 作为一个数据变量 接收 搜索历史记录
-      historyList: JSON.parse(localStorage.getItem(key) || '[]')
+      historyList: JSON.parse(localStorage.getItem(key) || '[]'),
+      suggestList: []// 联想的搜索建议
     }
   },
   methods: {
@@ -91,6 +93,54 @@ export default {
       localStorage.setItem(key, JSON.stringify(this.historyList))// 设置到本地缓存
       this.$router.push({ path: '/search/result', query: { q: this.q } })
       // // 搜索事件触发的时候 应该跳到 搜索结果页 并且携带 参数，v-model.trim="q"参数
+    },
+    toResult (text) {
+      // 应该也把这个text 放到历史记录啊
+      this.historyList.push(text)// 添加到历史记录
+      // 有可能重复
+      this.historyList = Array.from(new Set(this.historyList))
+      // 设置到本地的缓存中,将历史记录设置到缓存
+      localStorage.setItem(key, JSON.stringify(this.historyList))
+      // 跳转到搜索结果页
+      this.$router.push({ path: '/search/result', query: { q: text } })
+    }
+  },
+  watch: {
+    // 监听改变的方法两种，1监听组件的值改变事件van-search2另外一个是监听数据的变化q
+    // 监听谁就写谁的名字
+    // 函数防抖
+    q () {
+      // // 我们要在这个位置 去请求接口
+      // // 只要执行这个定时器先清掉他
+      // clearTimeout(this.timer)
+      // this.timer = setTimeout(async () => {
+      //   // // 需要判断 当清空的时候 不能发送请求 但是要把联想的建议清空
+      //   if (!this.q) { // 如果这时 搜索关键字没有内容
+      //     this.suggestList = [] // 不能再继续了
+      //     return
+      //   }
+      //   // this.q的this，要把上面变成箭头函数才能用this，setTimout作用域不是vue实例
+      //   const data = await getSuggestion({ q: this.q })// 第一个q是接口文档要求的
+      //   this.suggestList = data.options// 将返回的词条的options赋值给 当前的联想建议
+      // }, 300)
+      // 函数节流
+      if (!this.timer) {
+        this.timer = setTimeout(async () => {
+          // // 先将标记设置为空
+          this.timer = null
+          // 需要判断 当清空的时候 不能发送请求 但是要把联想的建议清空
+          if (!this.q) {
+            // 如果这时 搜索关键字没有内容
+            this.suggestList = []
+            // 不能再继续了
+            return
+          }
+          // 此函数中需要 请求 联想搜索的建议
+          // 联想搜索的建议 需要 放置在一个变量中
+          const data = await getSuggestion({ q: this.q })
+          this.suggestList = data.options // 将返回的词条的options赋值给 当前的联想建议
+        }, 300)
+      }
     }
   }
   // created () {
