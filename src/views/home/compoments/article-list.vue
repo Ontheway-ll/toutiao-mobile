@@ -11,9 +11,9 @@
     <!-- 下拉刷新组件，包裹列表组件 -->
     <van-pull-refresh v-model="downLoading" @refresh="onRefresh" :success-text="successText">
       <van-list finished-text="没有了" @load="onLoad" v-model="uploading" :finished="finished">
-        <!-- 循环的内容 -->
+        <!-- 循环的内容:to="`/article?artId,动态路由传参，artId随便起 -->
         <van-cell-group>
-          <van-cell v-for="item in articles" :key="item. art_id.toString()" >
+          <van-cell :to="`/article?artId=${item.art_id.toString()}`" v-for="item in articles" :key="item. art_id.toString()" >
             <!-- 放置元素 文章列表的循环项  无图  单图  三图 -->
             <div class="article_item">
               <!-- 标题 -->
@@ -35,8 +35,9 @@
                 <span>{{item.comm_count}}</span>
                 <span>{{item.pubdate | relTime }}</span>
                 <!-- 子传父自定义事件，点击叉号事件，传一个showAction -->
-                <!-- 所以我们需要点击叉号的时候 把文章id传出来,并且在父组件中接收 存储 -->
-                <span @click="$emit('showAction',item. art_id.toString())" class="close" v-if="user.token">
+                <!-- 所以我们需要点击叉号的时候 把文章id传出来,并且在父组件中接收 存储
+                们点击叉号事件继续冒泡, 结果触发了跳转, 所以我们需要一个修饰符,让事件停止冒泡 -->
+                <span @click.stop="$emit('showAction',item. art_id.toString())" class="close" v-if="user.token">
                   <van-icon  name="cross"></van-icon>
                 </span>
               </div>

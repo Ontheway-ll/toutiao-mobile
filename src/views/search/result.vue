@@ -8,7 +8,8 @@
     <!-- 防止搜索结果列表 ，实现上拉加载-->
     <van-list @load="onLoad" v-model="upLoading" :finished=finished>
       <van-cell-group>
-        <van-cell v-for="item in articles" :key="item.art_id.toString()">
+        <!-- artId要和主页文章列表跳转的artId一致，文章详情才能接收 -->
+        <van-cell :to="`/article?artId=${item.art_id.toString()}`" v-for="item in articles" :key="item.art_id.toString()">
           <div class="article_item">
             <h3 class="van-ellipsis">{{item.title}}</h3>
             <div class="img_box" v-if="item.cover.type===3">
