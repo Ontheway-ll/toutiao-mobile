@@ -20,20 +20,27 @@
         &nbsp;&nbsp;&nbsp;&nbsp;
         <van-button round size="small" :class="{active:article.attitude===0}" plain icon="delete">不喜欢</van-button>
       </div>
+       <!-- 放置comment组件 到 detail内部 因为有padding-->
+      <Comment></Comment>
     </div>
-    <!-- 放置一个遮罩层 -->
+    <!-- 放置一个遮罩层和加载进度条 -->
     <van-overlay :show="loading">
       <div class="loading-container">
       <van-loading type="spinner"></van-loading>
       </div>
     </van-overlay>
+
   </div>
 </template>
 
 <script>
 import * as Aritcles from '@/api/articles'
 import { followUser, unfollowUser } from '@/api/user'
+import Comment from './components/comment'
 export default {
+  components: {
+    Comment
+  },
   data () {
     return {
       article: {}, // 接收文章数据
