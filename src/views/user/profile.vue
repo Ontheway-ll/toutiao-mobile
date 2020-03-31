@@ -9,7 +9,8 @@
           height="1.5rem"
           fit="cover"
           round
-          src="https://img.yzcdn.cn/vant/cat.jpeg"
+          :src="user.photo"
+          @click="showPhoto=true"
         />
       </van-cell>
       <van-cell @click="showName=true" is-link title="名称" :value="user.name" />
@@ -22,7 +23,7 @@
       <!-- 内容 -->
       <!-- 1 本地相册选择图片 -->
       <!-- 2 拍照 -->
-       <van-cell is-link title="本地相册选择图片"></van-cell>
+       <van-cell @click="openFileDialog" is-link title="本地相册选择图片"></van-cell>
        <van-cell is-link title="拍照"></van-cell>
     </van-popup>
     <!-- 昵称弹层 -->
@@ -52,12 +53,16 @@
          />
     </van-popup>
     <!-- cancel事件是点击取消的时候，关闭日期弹层 -->
+    <!-- 准备表单控件，input，type=file类型表示上传，display:none隐藏标签 -->
+   <!-- vue中通过ref获取dom对象 ,如果选择图片就会触发change事件-->
+    <input @change="upload" ref="myFile" type="file" style="display:none">
   </div>
+
 </template>
 
 <script>
 import dayjs from 'dayjs'
-import { getUserProfile } from '@/api/user'
+import { getUserProfile, updatePhoto } from '@/api/user'
 export default {
   data () {
     return {
@@ -124,15 +129,31 @@ export default {
     async getUserProfile () {
       this.user = await getUserProfile()
     },
-    // 修改头像像
-    upload () {
-
+    // 点击本地相册，打开文件的对话框，触发点击input：file的动作
+    openFileDialog () {
+      this.$refs.myFile.click()// 触发input：file的click事件，触发事件就会弹出对话框
+    },
+    // 修改头像像,绑定upload函数
+    async upload (params) {
+      // debugger,进来之后可以知道change事件选择完头像
+      // 传的参数是form-data类型，怎么获取呢new一个
+      const data = new FormData()
+      // 添加参数append(key,)body里的参数名，第二个参数是选择的图片文件
+      //  debugger
+      // console.log(this.$refs.myFile);打印dom元素，看不到
+      // console.dir(this.$refs.myFile);打印元素对象，打印出来是input对象
+      // input里有个files属性，数组的第0条
+      data.append('photo', this.$refs.myFile.files[0])
+      // debugger第二个参数params应该可以通过断点看到,但是没有，可以通过其他方式
+      const result = await updatePhoto(data)// data当做一个参数传进去,上传头像
+      this.user.photo = result.photo// 把返回结果的photo赋值dataz中的数据的ptoto
+      this.showPhoto = false// 关闭弹层
     }
 
   },
   // 在钩子函数中调用
   created () {
-    getUserProfile()// 获取用户资料
+    this.getUserProfile()// 获取用户资料
   }
 }
 </script>
