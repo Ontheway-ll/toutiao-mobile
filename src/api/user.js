@@ -61,3 +61,12 @@ export function updatePhoto (data) {
     data
   })
 }
+// 保存用户信息
+export function saveUserInfo (data) {
+  return request({
+    url: '/user/profile',
+    method: 'patch',
+    // photo已经做完，不需要在去传这个参数,上面的data浅拷贝到这个对象中，
+    data: { ...data, photo: null }// 要求base64，不传也可以
+  })
+}
