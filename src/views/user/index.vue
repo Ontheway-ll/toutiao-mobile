@@ -55,10 +55,12 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['delUser']),
+    ...mapMutations(['delUser', 'updatePhoto']),
     // 获取用户个人信息
     async  getUserInfo () {
       this.userInfo = await getUserInfo()
+      // 调用mutations设置头像，photo是indexjs，userinfo.photo是上面src的
+      this.updatePhoto({ photo: this.userInfo.photo })// 更新用户的头像
     },
     // 退出登录并不只是单纯的跳到登录页,我们应该在退出之前清除token, 这里还要用到 我们的vuex
     // 首先,我们需要将原来的用户token删除, 然后在跳到登录页面

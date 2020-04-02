@@ -63,6 +63,7 @@
 <script>
 import dayjs from 'dayjs'
 import { getUserProfile, updatePhoto, saveUserInfo } from '@/api/user'
+import { mapMutations } from 'vuex'
 export default {
   data () {
     return {
@@ -86,6 +87,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['updatePhoto']), // 引入头像的方法
     btnName () {
       // 对按钮长度进行判断昵称进行控制,控制昵称的长度 1-7,
       if (this.user.name.length < 1 || this.user.name.length > 7) {
@@ -147,6 +149,8 @@ export default {
       // debugger第二个参数params应该可以通过断点看到,但是没有，可以通过其他方式
       const result = await updatePhoto(data)// data当做一个参数传进去,上传头像
       this.user.photo = result.photo// 把返回结果的photo赋值dataz中的数据的ptoto
+      // 将修改成功之后的头像设置给vuex
+      this.updatePhoto({ photo: result.photo })// 将最新的头像地址设置给vuex数据
       this.showPhoto = false// 关闭弹层
     },
     // 保存用户信息
