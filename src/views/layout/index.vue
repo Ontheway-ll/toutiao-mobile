@@ -9,7 +9,12 @@
     <!-- 判断当前的地址 如果是 /user 就给一个 noTop Class -->
     <!-- :class="{ 名称: 布尔值 }" -->
    <div  :class="{noTop:$route.path==='/user'}" class="my-wrapper">
-    <router-view></router-view>
+   <!-- 如果想要缓存二级路由组件时候，可以缓存二级路由容器
+   如果缓存了这个容器，下面的所有组件都会被缓存 -->
+    <keep-alive>
+      <!-- 用keep-alive包裹二级路由容器 -->
+      <router-view></router-view>
+    </keep-alive>
    </div>
    <!-- 标签栏组件 -->
    <!-- 表示开启路由模式 -->

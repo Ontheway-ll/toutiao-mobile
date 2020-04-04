@@ -3,7 +3,7 @@
   <!-- van-list 可以帮助我们实现上拉加载  需要一些变量 -->
   <!-- 这里放置这个div的目的是 形成滚动条, 因为我们后期要做 阅读记忆 -->
   <!-- 阅读记忆  上次你阅读到哪  回来之后还是哪-->
-  <div class="scroll-wrapper">
+  <div ref="mySroll" @scroll="remember" class="scroll-wrapper">
     <!-- 文章列表 -->
     <!-- van-list组件 如果不加干涉, 初始化完毕 就会检测 自己距离底部的长度,如果超过了限定 ,就会执行 load事件  自动把
        绑定的 loading 变成true
@@ -77,6 +77,26 @@ export default {
         }
       }
     })
+    // eventbus事件在created中写，初始化就开始监听
+    // eventbus.$on(事件名，回调函数)
+    eventBus.$on('changTabs', (id) => {
+      // 此ID就是当前被激活的ID，如果当前被激活索引的ID和文章列表组件的实例相等
+      // 判断当前文章列表接收的ID是否等于此ID，如果相等，改文章列表实例就是要滚动的实例
+      // 一个tab页就是一个实例,this.channel_id自身频道ID是通过props传过来的，
+      if (id === this.channel_id) {
+        // 如果相等，表示要滚动 滚动条
+        // 当滚动距离不为零，并且滚动元素存在的情况下
+        // 为什么这里不能实现？因为tab页切换事件执行之后，article—list组件渲染是异步，
+        // 没有办法立刻得出结果，获取不到this.$refs.mySroll
+        // 怎么才能此代码执行的时候上一次代码渲染完毕，vue渲染是异步的，
+        // this.$nextTick()会在上一次数据更新并完成页面渲染完成后执行
+        this.$nextTick(() => {
+          if (this.scrollTop && this.$refs.mySroll) {
+            this.$refs.mySroll.scrollTop = this.scrollTop// 滚动到固定位置
+          }
+        })
+      }
+    })
   },
   computed: {
     ...mapState(['user'])// 将user对象映射到计算属性中
@@ -88,7 +108,8 @@ export default {
       finished: false, // 表示 是否已经完成所有数据的加载
       downLoading: false, // 下载刷新状态 表示是否正在下拉刷新,变量名自己写
       successText: '', // 刷新成功的文本
-      timestamp: null// 定义一个 timestamp属性,用来存放时间戳
+      timestamp: null, // 定义一个 timestamp属性,用来存放时间戳
+      scrollTop: 0// 记录滚动的位置
     }
   },
   // props 对象形式 可以约束传入的值 必填 传值类型
@@ -102,6 +123,17 @@ export default {
     }
   },
   methods: {
+    // 记录滚动事件
+    remember (event) { // 从remember中拿到event事件参数
+    // console.log(event);里面的target属性div里的scollTop
+
+      // 函数防抖，在一定时间内只是执行一次
+      clearTimeout(this.timer)
+      this.timer = setTimeout(() => {
+        // 记录当前滚动的位置
+        this.scrollTop = event.target.scrollTop// 记录滚动的位置
+      }, 500)
+    },
     async onLoad () {
       await this.$sleep() // 人为控制了 请求的时间
       //   console.log('开始加载数据')
@@ -189,6 +221,14 @@ export default {
         // 如果换不来新数据
         this.successText = '当前已经是最新了'
       }
+    }
+  },
+  activated () {
+    // console.log('激活函数')
+    // 判断当前是否存在这个div而且,判断当前的scrollTop是否发生了变化，是否大于0
+    if (this.$refs.mySroll && this.scrollTop) {
+      // 记录滚动条滚回到对应的位置
+      this.$refs.mySroll.scrollTop = this.scrollTop
     }
   }
 }

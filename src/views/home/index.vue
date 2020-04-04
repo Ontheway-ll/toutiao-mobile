@@ -1,7 +1,8 @@
 <template>
   <div class="container">
     <!-- 放置tabs组件 ,默认绑定激活页签-->
-    <van-tabs v-model="activeIndex" >
+    <!-- change是van的一个事件，当前激活的页签改变时触发 -->
+    <van-tabs @change="changTab" v-model="activeIndex" >
         <!-- 内部需要放置子 标签  title值为当前显示的内容-->
          <!-- van-tab是vant组件的样式  -->
       <van-tab :title="item.name" v-for="item in channels " :key="item.id">
@@ -76,6 +77,13 @@ export default {
     }
   },
   methods: {
+    // 当前激活页签改变时触发这个方法，切换页签事件
+    changTab () {
+      // 切换页签时广播一个消息，让对应的页签的文章列表去滚动 滚动条
+      // 此时已经引入eventbus,下面changtabs随便起名字
+      // 在广播中传出一个参数，传出当前激活索引 的ID
+      eventbus.$emit('changTabs', this.channels[this.activeIndex].id)
+    },
     async getMychannels () { // 自己定义的一个方法，也叫getMychannels
       const data = await getMychannels()
       this.channels = data.channels
